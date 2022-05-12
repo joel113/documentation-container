@@ -1,0 +1,63 @@
+version: "3.8"
+
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    hostname: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      - ZOOKEEPER_CLIENT_PORT=2181
+      - ZOOKEEPER_TICK_TIME=2000
+  kafka_1:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka
+    hostname: ${KAFKA_HOSTNAME:-kafka}
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_ADVERTISED_HOST_NAME=${KAFKA_HOSTNAME:-localhost}
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://${KAFKA_HOSTNAME:-localhost}:9092
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      - KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
+  localstack:
+    image: localstack/localstack:latest
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=kinesis,dynamodb,cloudwatch
+  mq:
+    image: ibmcom/mq:latest
+    ports:
+      - "1414:1414"
+      - "9443:9443"
+    environment:
+      - MQ_DEV=true
+      - LICENSE=accept
+      - MQ_QMGR_NAME=DEVQMGR
+  vhs:
+    build: .
+    depends_on:
+      - zookeeper
+      - kafka_1
+      - localstack
+    environment:
+      - APPID=VHS
+      - HUB=LOCAL
+      - STAGE=DEV
+      - AWS_DEFAULT_REGION=eu-central-1
+      - AWS_ACCESS_KEY_ID=foobar
+      - AWS_SECRET_ACCESS_KEY=foobar
+      - AWS_CUSTOM_ENDPOINT_ENABLED=true
+      - AWS_KINESIS_CUSTOM_ENDPOINT=http://localhost:4566
+      - AWS_CBOR_ENABLED=false
+      - AWS_EXPLICIT_POLLING_ENABLED=true
+      - KAFKA_SECURITY_ENABLED=false
+      - KAFKA_SECURITY_PROTOCOL=PLAINTEXT
+      - KAFKA_BOOTSTRAP_SERVERS=127.0.0.1:9092
+      - JMS_QUEUE_ISTA_TS_REQUEST=DEV.QUEUE.1
