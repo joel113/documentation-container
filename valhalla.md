@@ -8,7 +8,9 @@
 
 `nerdctl run -it --rm valhalla:latest valhalla`
 
-`nerdctl exec -it 320fdc11237e /bin/sh`
+`nerdctl run -it --name valhalla -p 8002:8002 -v $PWD/valhalla:/custom_files/ -e serve_tiles=True -e build_admins=True ghcr.io/gis-ops/docker-valhalla/valhalla:latest`
+
+`nerdctl exec -it --name valhalla /bin/sh`
 
 ## References
 
