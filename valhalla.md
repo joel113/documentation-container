@@ -1,16 +1,16 @@
 # Valhalla Docker Documentation
 
-`nerdctl login ghcr.io`
+`docker login ghcr.io`
 
-`nerdctl pull ghcr.io/gis-ops/docker-valhalla/valhalla:latest`
+`docker pull ghcr.io/gis-ops/docker-valhalla/valhalla:latest`
 
-`nerdctl run -it --rm valhalla`
+`docker run -it --rm valhalla`
 
-`nerdctl run -it --rm valhalla:latest valhalla`
+`docker run -it --rm valhalla:latest valhalla`
 
-`nerdctl run -it --name valhalla -p 8002:8002 -v $PWD/valhalla:/custom_files/ -e serve_tiles=True -e build_admins=True ghcr.io/gis-ops/docker-valhalla/valhalla:latest`
+`docker run -it --name valhalla -p 8002:8002 -v $PWD/valhalla:/custom_files/ -e serve_tiles=True -e build_admins=True ghcr.io/gis-ops/docker-valhalla/valhalla:latest`
 
-`nerdctl exec -it --name valhalla /bin/sh`
+`docker exec -it --name valhalla /bin/sh`
 
 ## References
 
