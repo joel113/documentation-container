@@ -48,6 +48,34 @@ https://github.com/grafana/intro-to-mlt
 
 https://github.com/grafana/agent
 
+## Docker Compose
+
+This project uses a docker-compose setup to spawn a full prometheus / grafana stack. Please follow to following links for more information about docker-compose:
+
+https://docs.docker.com/compose/compose-file/
+
+## Grafana
+
+This project uses also grafana to have a full prometheus / grafana stack. Please follow to following links for grafana configuration:
+
+https://hub.docker.com/r/grafana/grafana
+
+https://grafana.com/docs/grafana/latest/setup-grafana/configure-docker/
+
+https://github.com/grafana/grafana/blob/main/conf/defaults.ini
+
+## Prometheus
+
+This project uses also prometheus to have a full prometheus / grafana stack. Please follow to following links for prometheus configuration:
+
+https://hub.docker.com/r/prom/prometheus
+
+https://prometheus.io/docs/introduction/overview/
+
+https://prometheus.io/docs/prometheus/latest/configuration/configuration/
+
+https://github.com/prometheus/prometheus/blob/main/documentation/examples/prometheus.yml
+
 ## References
 
 https://grafana.com/docs/agent/next/set-up/install-agent-docker/
@@ -59,3 +87,7 @@ https://grafana.com/docs/agent/next/about-agent/
 https://grafana.com/docs/agent/next/api/
 
 https://grafana.com/docs/agent/next/operator/
+
+## Strava Datasource
+
+https://github.com/grafana/strava-datasource
