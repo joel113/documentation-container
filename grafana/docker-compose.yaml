@@ -19,7 +19,7 @@ services:
       - ./grafana.ini:/etc/grafana/grafana.ini
     restart: always
   agent:
-    dependens_on:
+    depends_on:
       - grafana
     image: grafana/agent:latest 
     restart: always
