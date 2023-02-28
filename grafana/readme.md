@@ -1,5 +1,9 @@
 # Grafana Agent
 
+## Github
+
+https://github.com/grafana/agent
+
 ## Image
 
 `docker pull grafana/agent:latest`
@@ -64,6 +68,22 @@ https://grafana.com/docs/grafana/latest/setup-grafana/configure-docker/
 
 https://github.com/grafana/grafana/blob/main/conf/defaults.ini
 
+https://grafana.com/docs/grafana/latest/administration/provisioning/
+
+https://github.com/vegasbrianc/prometheus/blob/master/grafana/provisioning/datasources/datasource.yml
+
+## Grafana Mimir
+
+This project uses also grafana mimir to have a full prometheus / grafana stack. Please follow to following links for grafana mimir configuration:
+
+https://grafana.com/oss/mimir/
+
+https://grafana.com/docs/mimir/latest/operators-guide/get-started/
+
+https://github.com/grafana/mimir/blob/main/operations/helm/charts/mimir-distributed/values.yaml
+
+https://grafana.com/docs/mimir/latest/operators-guide/reference-http-api/
+
 ## Prometheus
 
 This project uses also prometheus to have a full prometheus / grafana stack. Please follow to following links for prometheus configuration:
@@ -75,6 +95,12 @@ https://prometheus.io/docs/introduction/overview/
 https://prometheus.io/docs/prometheus/latest/configuration/configuration/
 
 https://github.com/prometheus/prometheus/blob/main/documentation/examples/prometheus.yml
+
+https://prometheus.io/docs/instrumenting/pushing/
+
+https://stackoverflow.com/questions/62693341/pushing-metrics-data-to-prometheus
+
+https://github.com/prometheus/pushgateway
 
 ## References
 
