@@ -3,13 +3,16 @@ version: '3.3'
 services:
   prometheus:
     image: prom/prometheus:latest
+    hostname: prometheus
     ports:
       - 9090:9090
     volumes:
+      - /tmp/prometheus:/prometheus
       - ./prometheus.yaml:/etc/prometheus/prometheus.yaml
     restart: always
   mimir:
     image: grafana/mimir:latest
+    hostname: mimir
     ports:
       - 9009:9009
     volumes:
@@ -22,6 +25,7 @@ services:
       - prometheus
       - mimir
     image: grafana/grafana:latest
+    hostname: mimir
     ports:
       - 3000:3000
     volumes:
@@ -34,6 +38,7 @@ services:
     depends_on:
       - grafana
     image: grafana/agent:latest 
+    hostname: agent
     restart: always
     volumes:
       - /tmp/agent:/etc/agent/data

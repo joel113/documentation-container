@@ -2,7 +2,7 @@ metrics:
   wal_directory: /tmp/wal
   global:
     remote_write:
-      - url: http://localhost:9009/api/v1/push
+      - url: http://mimir:9009/api/v1/push
 
 integrations:
   agent:
