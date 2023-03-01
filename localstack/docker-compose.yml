@@ -31,16 +31,7 @@ services:
       - "4566:4566"
     environment:
       - SERVICES=kinesis,dynamodb,cloudwatch
-  mq:
-    image: ibmcom/mq:latest
-    ports:
-      - "1414:1414"
-      - "9443:9443"
-    environment:
-      - MQ_DEV=true
-      - LICENSE=accept
-      - MQ_QMGR_NAME=DEVQMGR
-  vhs:
+  service:
     build: .
     depends_on:
       - zookeeper
@@ -60,4 +51,3 @@ services:
       - KAFKA_SECURITY_ENABLED=false
       - KAFKA_SECURITY_PROTOCOL=PLAINTEXT
       - KAFKA_BOOTSTRAP_SERVERS=127.0.0.1:9092
-      - JMS_QUEUE_ISTA_TS_REQUEST=DEV.QUEUE.1
