@@ -25,7 +25,7 @@ services:
       - prometheus
       - mimir
     image: grafana/grafana:latest
-    hostname: mimir
+    hostname: grafana
     ports:
       - 3000:3000
     volumes:
