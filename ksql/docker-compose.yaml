@@ -1,21 +1,22 @@
 ---
-version: '2'
+version: '3'
 
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper:7.3.0
     hostname: zookeeper
     container_name: zookeeper
+    restart: on-failure
     ports:
       - "2181:2181"
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
-
   broker:
     image: confluentinc/cp-kafka:7.3.0
     hostname: broker
     container_name: broker
+    restart: on-failure
     depends_on:
       - zookeeper
     ports:
@@ -29,11 +30,11 @@ services:
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-
   ksqldb-server:
     image: confluentinc/cp-ksqldb-server:latest
     hostname: ksqldb-server
     container_name: ksqldb-server
+    restart: on-failure
     depends_on:
       - broker
     ports:
@@ -43,11 +44,16 @@ services:
       KSQL_BOOTSTRAP_SERVERS: broker:9092
       KSQL_KSQL_LOGGING_PROCESSING_STREAM_AUTO_CREATE: "true"
       KSQL_KSQL_LOGGING_PROCESSING_TOPIC_AUTO_CREATE: "true"
-
   ksqldb-cli:
-    image: confluentinc/cp-ksqldb-cli:latest
+    # ksqldb-cli does not provide an arm image, and cp-ksqldb-cli does not work as expected
+    #    image: confluentinc/ksqldb-cli:latest
+    build:
+      context: ksqldb-cli
+      dockerfile: Dockerfile
     container_name: ksqldb-cli
+    restart: on-failure
     depends_on:
       - broker
       - ksqldb-server
     entrypoint: /bin/sh
+    tty: true
