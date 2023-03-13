@@ -20,10 +20,16 @@ services:
     command:
       - --config.file=/etc/mimir.yaml
     restart: always
+  loki:
+    image: grafana/loki:latest
+    hostname: loki
+    ports:
+      - 3100:3100
   grafana:
     depends_on:
       - prometheus
       - mimir
+      - loki
     image: grafana/grafana:latest
     hostname: grafana
     ports:
@@ -33,6 +39,7 @@ services:
       - ./grafana.ini:/etc/grafana/grafana.ini
       - ./grafana-prometheus.yaml:/etc/grafana/provisioning/datasources/grafana-prometheus.yaml
       - ./grafana-mimir.yaml:/etc/grafana/provisioning/datasources/grafana-mimir.yaml
+      - ./grafana-loki.yaml:/etc/grafana/provisioning/datasources/grafana-loki.yaml
     restart: always
   agent:
     depends_on:

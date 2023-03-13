@@ -1,14 +1,18 @@
-# Grafana Agent
+# Grafana
 
-## Github
+## Grafana Agent
+
+I started this container project with having a look at the Grafana agent. The agent collects metrics, logs and traces and submits it to the configured targets.
+
+### Github
 
 https://github.com/grafana/agent
 
-## Image
+### Image
 
 `docker pull grafana/agent:latest`
 
-## Container
+### Container
 
 ```
 docker run \
@@ -17,7 +21,7 @@ docker run \
   grafana/agent:latest
 ```
 
-## Configuration
+### Configuration
 
 The Grafana Agent has mutltiple independent subsystems including
 
@@ -44,7 +48,7 @@ I did setup the config with a symbolic link to the config in the `grafana-agent`
 
 `ln -s ~/src-personal/dodcumentation-containers/grafana-agent/grafana-agent-config.yaml grafana-agent-config.yaml`
 
-## Repositories
+### Repositories
 
 https://github.com/grafana
 
@@ -52,7 +56,7 @@ https://github.com/grafana/intro-to-mlt
 
 https://github.com/grafana/agent
 
-## Docker Compose
+### Docker Compose
 
 This project uses a docker-compose setup to spawn a full prometheus / grafana stack. Please follow to following links for more information about docker-compose:
 
@@ -83,6 +87,18 @@ https://grafana.com/docs/mimir/latest/operators-guide/get-started/
 https://github.com/grafana/mimir/blob/main/operations/helm/charts/mimir-distributed/values.yaml
 
 https://grafana.com/docs/mimir/latest/operators-guide/reference-http-api/
+
+## Grafana Loki
+
+This project uses also grafana loki to have a full prometheus / grafana stack. Please follow to following links for grafana loki configuration:
+
+https://grafana.com/oss/loki/
+
+https://github.com/grafana/loki
+
+https://hub.docker.com/r/grafana/loki
+
+https://grafana.com/docs/grafana-cloud/data-configuration/logs/collect-logs-with-agent/
 
 ## Prometheus
 
