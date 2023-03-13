@@ -49,4 +49,4 @@ services:
     restart: always
     volumes:
       - /tmp/agent:/etc/agent/data
-      - ./agent.yaml:/etc/agent/agent.yaml 
+      - ./grafana-agent.yaml:/etc/agent/agent.yaml 

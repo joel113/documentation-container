@@ -98,7 +98,11 @@ https://github.com/grafana/loki
 
 https://hub.docker.com/r/grafana/loki
 
+https://hub.docker.com/r/grafana/loki
+
 https://grafana.com/docs/grafana-cloud/data-configuration/logs/collect-logs-with-agent/
+
+https://grafana.com/docs/loki/latest/configuration/examples/#almost-zero-dependencyyaml
 
 ## Prometheus
 
@@ -129,6 +133,8 @@ https://grafana.com/docs/agent/next/about-agent/
 https://grafana.com/docs/agent/next/api/
 
 https://grafana.com/docs/agent/next/operator/
+
+https://grafana.com/docs/agent/latest/configuration/create-config-file/
 
 ## Strava Datasource
 

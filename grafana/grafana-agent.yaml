@@ -1,0 +1,22 @@
+metrics:
+  wal_directory: /tmp/wal
+  global:
+    remote_write:
+      - url: http://mimir:9009/api/v1/push
+
+logs:
+  configs:
+  - name: default
+    positions:
+        filename: /tmp/positions.yaml
+    scrape_configs:
+      - job_name: varlogs
+        static_configs:
+          - targets: [localhost]
+            labels:
+              job: varlogs
+              __path__: /var/log/*log
+
+integrations:
+  agent:
+    enabled: true
