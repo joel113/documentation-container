@@ -1,6 +1,14 @@
 version: '3.3'
 
 services:
+  fakeservice:
+    build:
+      context: ./go-fakeservice
+      dockerfile: Dockerfile
+    hostname: fakeservice
+    ports:
+      - 3001:3001
+    restart: always
   prometheus:
     image: prom/prometheus:latest
     hostname: prometheus
