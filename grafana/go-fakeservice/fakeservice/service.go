@@ -11,7 +11,7 @@ import (
 
 const (
 	pingRoute  		string = "/ping/"
-	notfoundRoude	string = "/notfound7"
+	notfoundRoude	string = "/notfound/"
 	metricsRoute   	string = "/metrics/"
 )
 
