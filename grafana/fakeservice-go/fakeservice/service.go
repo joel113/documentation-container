@@ -16,7 +16,7 @@ const (
 )
 
 type fakeserviceHandler struct {
-	pingCounter instrument.Int64Counter
+	pingCounter *instrument.Int64Counter
 }
 
 // the ping function implements the http.Handler interface:
@@ -24,19 +24,22 @@ type fakeserviceHandler struct {
 //    ServeHTTP(ResponseWriter, *Request)
 //}
 func (fs fakeserviceHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	fs.pingCounter.Add(context.Background(), 1)
+	(*fs.pingCounter).Add(context.Background(), 1)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(`{"response":"pong"}`))
 	log.Print("Ping request replied with pong")
 }
 
-func NewFakeserviceService(meterProvider *metric.MeterProvider, promHandler http.Handler) *http.ServeMux {
-	pingMeter := meterProvider.Meter("pingmeter")
-	pingCounter, err := pingMeter.Int64Counter("ping", instrument.WithDescription("a simple counter of pings"))
+func NewFakeserviceService(provider *metric.MeterProvider, promHandler http.Handler) *http.ServeMux {
+	meter := provider.Meter("another sample counter in service.go")
+	pingCounter, err := meter.Int64Counter("foobar", instrument.WithDescription("a simple int counter of pings"))
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	// simply add 1 because otherwise the metric does not appear in the prometheus export
+	pingCounter.Add(context.Background(), 1)
 
 	// the net/http go package differentiates between handler and muxes where
 	// - a handler is a controller containing the application logic and
@@ -44,7 +47,7 @@ func NewFakeserviceService(meterProvider *metric.MeterProvider, promHandler http
 	// the following example of a pingRoute uses a custom handler while the 
 	// notfoundRoute uses the predefined http.NotFoundHandler()
 	mux := http.NewServeMux()
-	fs := fakeserviceHandler{pingCounter}
+	fs := fakeserviceHandler{&pingCounter}
 	nf := http.NotFoundHandler()
 	mux.Handle(pingRoute, fs)
 	mux.Handle(notfoundRoude, nf)

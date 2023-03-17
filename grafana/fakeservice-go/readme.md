@@ -50,6 +50,14 @@ https://github.com/census-ecosystem/opencensus-go-exporter-prometheus
 
 https://pkg.go.dev/contrib.go.opencensus.io/exporter/prometheus
 
+## OpenTelemetry Metrics
+
+https://opentelemetry.io/docs/reference/specification/metrics/api/
+
+https://github.com/open-telemetry/opentelemetry-go/blob/main/example/prometheus/main.go
+
+https://github.com/open-telemetry/opentelemetry-go/discussions/2995
+
 ### Debugging Go with Visual Studio Code
 
 https://code.visualstudio.com/docs/languages/go
