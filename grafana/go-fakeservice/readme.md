@@ -50,6 +50,10 @@ https://github.com/census-ecosystem/opencensus-go-exporter-prometheus
 
 https://pkg.go.dev/contrib.go.opencensus.io/exporter/prometheus
 
+### Debugging Go with Visual Studio Code
+
+https://code.visualstudio.com/docs/languages/go
+
 ## Further References
 
 https://github.com/sagikazarmark/modern-go-application

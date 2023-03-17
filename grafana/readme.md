@@ -62,6 +62,12 @@ This project uses a docker-compose setup to spawn a full prometheus / grafana st
 
 https://docs.docker.com/compose/compose-file/
 
+## Grafana Agent
+
+https://grafana.com/docs/agent/latest/configuration/create-config-file/
+
+https://grafana.com/docs/agent/latest/configuration/metrics-config/
+
 ## Grafana
 
 This project uses also grafana to have a full prometheus / grafana stack. Please follow to following links for grafana configuration:

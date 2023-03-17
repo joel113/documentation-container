@@ -1,8 +1,19 @@
+server:
+  log_level: debug
 metrics:
   wal_directory: /tmp/wal
   global:
-    remote_write:
-      - url: http://mimir:9009/api/v1/push
+    scrape_interval: 1m
+#    remote_write:
+#      - url: http://mimir:9009/api/v1/push
+  configs:
+    - name: fakeservice
+      scrape_configs:
+        - job_name: fakeservice
+          static_configs:
+            - targets: ['fakeservice:3001']
+      remote_write:
+        - url: http://mimir:9009/api/v1/push
 
 logs:
   configs:
