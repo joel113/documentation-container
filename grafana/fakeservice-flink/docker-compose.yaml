@@ -1,14 +1,61 @@
 version: '2'
 services:
-  flink-master:
-    image: flink:1.16.1-scala_2.12-java11
-    hostname: fakeservice-flink-master
-    container_name: fakeservice-flink-master
+  flink-zookeeper:
+    image: confluentinc/cp-zookeeper:7.3.0
+    hostname: flink-zookeeper
+    container_name: flink-zookeeper
+    restart: on-failure
     ports:
-      - "8080:8080"
-      - "8081:8081"
-  flink-worker:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+  flink-broker:
+    image: confluentinc/cp-kafka:7.3.0
+    hostname: flink-broker
+    container_name: flink-broker
+    restart: on-failure
+    depends_on:
+      - flink-zookeeper
+    ports:
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'flink-zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://flink-broker:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+  flink-jobmanager:
     image: flink:1.16.1-scala_2.12-java11
-    hostname: fakeservice-flink-worker
-    container_name: fakeservice-flink-worker
-    depends_on: flink-master
+    hostname: jobmanager
+    container_name: fakeservice-flink-jobmanager
+    command: standalone-job --job-classname com.joel.TopSpeedWindowing
+    volumes:
+      - ./target/fakeservice-flink-example-0.0.1-SNAPSHOT-TopSpeedWindowing.jar:/opt/flink/usrlib/fakeservice-flink-example-0.0.1-SNAPSHOT-TopSpeedWindowing.jar
+    ports:
+      - "8081:8081"
+    depends_on:
+      - flink-broker
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: jobmanager
+        parallelism.default: 2
+  flink-taskmanager:
+    image: flink:1.16.1-scala_2.12-java11
+    hostname: taskmanager
+    container_name: fakeservice-flink-taskmanager
+    command: taskmanager
+    volumes:
+      - ./target/fakeservice-flink-example-0.0.1-SNAPSHOT-TopSpeedWindowing.jar:/opt/flink/usrlib/fakeservice-flink-example-0.0.1-SNAPSHOT-TopSpeedWindowing.jar
+    depends_on:
+      - flink-jobmanager
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: jobmanager
+        taskmanager.numberOfTaskSlots: 2
+        parallelism.default: 2  

@@ -3,19 +3,14 @@ package com.joel
 import org.apache.flink.api.common.RuntimeExecutionMode
 import org.apache.flink.api.common.eventtime.WatermarkStrategy
 import org.apache.flink.api.common.functions.RichMapFunction
-import org.apache.flink.api.common.serialization.SimpleStringEncoder
-import org.apache.flink.api.java.utils.ParameterTool
+import org.apache.flink.api.common.serialization.SimpleStringSchema
 import org.apache.flink.api.scala.createTypeInformation
-import org.apache.flink.configuration.MemorySize
-import org.apache.flink.connector.file.sink.FileSink
-import org.apache.flink.connector.file.src.FileSource
-import org.apache.flink.connector.file.src.reader.TextLineInputFormat
-import org.apache.flink.core.fs.Path
-import org.apache.flink.streaming.api.functions.sink.filesystem.rollingpolicies.DefaultRollingPolicy
+import org.apache.flink.connector.base.DeliveryGuarantee
+import org.apache.flink.connector.kafka.sink.{KafkaRecordSerializationSchema, KafkaSink}
+import org.apache.flink.connector.kafka.source.KafkaSource
+import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer
 import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment}
 import org.apache.flink.streaming.api.windowing.assigners.GlobalWindows
-
-import java.time.Duration
 
 object TopSpeedWindowing {
 
@@ -24,17 +19,18 @@ object TopSpeedWindowing {
   def main(args: Array[String]): Unit = {
     implicit val env: StreamExecutionEnvironment =
       StreamExecutionEnvironment.getExecutionEnvironment
-    env.setRuntimeMode(RuntimeExecutionMode.STREAMING)
+    env.setRuntimeMode(RuntimeExecutionMode.BATCH)
 
-    val param = ParameterTool.fromArgs(args)
-    val inputFolder = param.get("inputFolder")
-    val outputFolder = param.get("outputFolder")
-    val fileSource = FileSource.forRecordStreamFormat(
-      new TextLineInputFormat(),
-      new Path(inputFolder))
+    val source = KafkaSource.builder()
+      .setBootstrapServers("flink-broker")
+      .setTopics("cardata")
+      .setGroupId("groupid")
+      .setStartingOffsets(OffsetsInitializer.earliest())
+      .setValueOnlyDeserializer(new SimpleStringSchema())
+      .build()
 
     val carData: DataStream[CarEvent] = env
-      .fromSource(fileSource.build(), WatermarkStrategy.noWatermarks(), "file-input")
+      .fromSource(source, WatermarkStrategy.noWatermarks(), "kafka-source")
       .map(new ParseCarData())
       .name("parse-input")
 
@@ -43,19 +39,23 @@ object TopSpeedWindowing {
       .keyBy(_.carId)
       .window(GlobalWindows.create())
       .maxBy("speed")
+      .map(_.toString)
+
+    val sink = KafkaSink.builder()
+      .setBootstrapServers("flink-broker")
+      .setRecordSerializer(KafkaRecordSerializationSchema.builder()
+        .setTopic("topic-name")
+        .setValueSerializationSchema(new SimpleStringSchema())
+        .build()
+      )
+      .setDeliveryGuarantee(DeliveryGuarantee.AT_LEAST_ONCE)
+      .build();
 
     topSpeeds
-      .sinkTo(
-        FileSink
-          .forRowFormat[CarEvent](new Path(outputFolder), new SimpleStringEncoder())
-          .withRollingPolicy(
-            DefaultRollingPolicy
-              .builder()
-              .withMaxPartSize(MemorySize.ofMebiBytes(1))
-              .withRolloverInterval(Duration.ofSeconds(10))
-              .build())
-          .build())
-      .name("file-sink")
+      .sinkTo(sink)
+      .name("kafka-sink")
+
+    env.execute()
   }
 
   private class ParseCarData extends RichMapFunction[String, CarEvent] {
