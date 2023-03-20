@@ -1,0 +1,14 @@
+version: '2'
+services:
+  flink-master:
+    image: flink:1.16.1-scala_2.12-java11
+    hostname: fakeservice-flink-master
+    container_name: fakeservice-flink-master
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+  flink-worker:
+    image: flink:1.16.1-scala_2.12-java11
+    hostname: fakeservice-flink-worker
+    container_name: fakeservice-flink-worker
+    depends_on: flink-master
