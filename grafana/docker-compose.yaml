@@ -3,7 +3,7 @@ version: '3.3'
 services:
   fakeservice:
     build:
-      context: ./go-fakeservice
+      context: ./fakeservice-go
       dockerfile: Dockerfile
     hostname: fakeservice
     ports:
