@@ -28,13 +28,24 @@ services:
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+  flink-kafka-topics-creator:
+    build:
+      context: kafka-topic-creator
+      dockerfile: Dockerfile
+    container_name: kafka-topics-creator
+    depends_on:
+      - flink-broker
+    environment:
+      ZOOKEEPER_HOSTS: "zookeeper:2181"
+      KAFKA_TOPICS: "cardata topspeed"
   flink-jobmanager:
     image: flink:1.16.1-scala_2.12-java11
     hostname: jobmanager
     container_name: fakeservice-flink-jobmanager
     command: standalone-job --job-classname com.joel.TopSpeedWindowing
+    restart: always
     volumes:
-      - ./target/fakeservice-flink-example-0.0.1-SNAPSHOT-TopSpeedWindowing.jar:/opt/flink/usrlib/fakeservice-flink-example-0.0.1-SNAPSHOT-TopSpeedWindowing.jar
+      - ./target/fakeservice-flink-example-0.0.1-SNAPSHOT-jar-with-dependencies.jar:/opt/flink/usrlib/fakeservice-flink-example-0.0.1-SNAPSHOT-jar-with-dependencies.jar
     ports:
       - "8081:8081"
     depends_on:
@@ -49,8 +60,9 @@ services:
     hostname: taskmanager
     container_name: fakeservice-flink-taskmanager
     command: taskmanager
+    restart: always
     volumes:
-      - ./target/fakeservice-flink-example-0.0.1-SNAPSHOT-TopSpeedWindowing.jar:/opt/flink/usrlib/fakeservice-flink-example-0.0.1-SNAPSHOT-TopSpeedWindowing.jar
+      - ./target/fakeservice-flink-example-0.0.1-SNAPSHOT-jar-with-dependencies.jar:/opt/flink/usrlib/fakeservice-flink-example-0.0.1-SNAPSHOT-jar-with-dependencies.jar
     depends_on:
       - flink-jobmanager
     environment:

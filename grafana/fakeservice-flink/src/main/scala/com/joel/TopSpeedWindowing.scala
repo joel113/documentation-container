@@ -19,10 +19,10 @@ object TopSpeedWindowing {
   def main(args: Array[String]): Unit = {
     implicit val env: StreamExecutionEnvironment =
       StreamExecutionEnvironment.getExecutionEnvironment
-    env.setRuntimeMode(RuntimeExecutionMode.BATCH)
+    env.setRuntimeMode(RuntimeExecutionMode.STREAMING)
 
     val source = KafkaSource.builder()
-      .setBootstrapServers("flink-broker")
+      .setBootstrapServers("flink-broker:9092")
       .setTopics("cardata")
       .setGroupId("groupid")
       .setStartingOffsets(OffsetsInitializer.earliest())
@@ -42,9 +42,9 @@ object TopSpeedWindowing {
       .map(_.toString)
 
     val sink = KafkaSink.builder()
-      .setBootstrapServers("flink-broker")
+      .setBootstrapServers("flink-broker:9092")
       .setRecordSerializer(KafkaRecordSerializationSchema.builder()
-        .setTopic("topic-name")
+        .setTopic("topseed")
         .setValueSerializationSchema(new SimpleStringSchema())
         .build()
       )

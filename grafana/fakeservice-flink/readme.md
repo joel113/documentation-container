@@ -18,6 +18,16 @@ https://hub.docker.com/_/flink/
 
 https://nightlies.apache.org/flink/flink-docs-release-1.16/docs/dev/datastream/operators/windows/
 
+https://stackoverflow.com/questions/1729054/including-dependencies-in-a-jar-with-maven
+
+## Kafka Docker
+
+https://stackoverflow.com/questions/58004386/i-need-to-create-a-kafka-image-with-topics-already-created
+
+## Flink Kafka
+
+https://nightlies.apache.org/flink/flink-docs-master/docs/connectors/datastream/kafka/
+
 ## Flink OpenTelemetry Instrumentation
 
 https://stackoverflow.com/questions/68222847/use-opentelemetry-with-apache-flink
