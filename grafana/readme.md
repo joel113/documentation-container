@@ -62,6 +62,8 @@ This project uses a docker-compose setup to spawn a full prometheus / grafana st
 
 https://docs.docker.com/compose/compose-file/
 
+https://stackoverflow.com/questions/38088279/communication-between-multiple-docker-compose-projects
+
 ## Grafana Agent
 
 https://grafana.com/docs/agent/latest/configuration/create-config-file/

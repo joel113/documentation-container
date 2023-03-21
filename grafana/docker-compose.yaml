@@ -1,14 +1,21 @@
-version: '3.3'
+version: '3.5'
+
+networks:
+  my-network:
+    name: network
+    driver: bridge
 
 services:
   fakeservice:
     build:
       context: ./fakeservice-go
       dockerfile: Dockerfile
-    hostname: fakeservice
+    hostname: fakeservice-go
     ports:
       - 3001:3001
     restart: always
+    networks:
+      - my-network
   prometheus:
     image: prom/prometheus:latest
     hostname: prometheus
@@ -18,6 +25,8 @@ services:
       - /tmp/prometheus:/prometheus
       - ./prometheus.yaml:/etc/prometheus/prometheus.yaml
     restart: always
+    networks:
+      - my-network
   mimir:
     image: grafana/mimir:latest
     hostname: mimir
@@ -28,11 +37,16 @@ services:
     command:
       - --config.file=/etc/mimir.yaml
     restart: always
+    networks:
+      - my-network
   loki:
     image: grafana/loki:latest
     hostname: loki
     ports:
       - 3100:3100
+    restart: always
+    networks:
+      - my-network
   grafana:
     depends_on:
       - prometheus
@@ -49,12 +63,16 @@ services:
       - ./grafana-mimir.yaml:/etc/grafana/provisioning/datasources/grafana-mimir.yaml
       - ./grafana-loki.yaml:/etc/grafana/provisioning/datasources/grafana-loki.yaml
     restart: always
+    networks:
+      - my-network
   agent:
     depends_on:
       - grafana
     image: grafana/agent:latest 
     hostname: agent
-    restart: always
     volumes:
       - /tmp/agent:/etc/agent/data
       - ./grafana-agent.yaml:/etc/agent/agent.yaml 
+    restart: always
+    networks:
+      - my-network

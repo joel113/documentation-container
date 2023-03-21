@@ -33,3 +33,9 @@ https://nightlies.apache.org/flink/flink-docs-master/docs/connectors/datastream/
 https://stackoverflow.com/questions/68222847/use-opentelemetry-with-apache-flink
 
 https://github.com/open-telemetry/opentelemetry-java-instrumentation/issues/7597
+
+https://opentelemetry.io/docs/instrumentation/java/automatic/agent-config/
+
+https://github.com/open-telemetry/opentelemetry-java/blob/main/sdk-extensions/autoconfigure/README.md#prometheus-exporter
+
+https://nightlies.apache.org/flink/flink-docs-release-1.15/docs/deployment/resource-providers/standalone/docker/

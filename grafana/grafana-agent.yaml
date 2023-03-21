@@ -7,11 +7,18 @@ metrics:
 #    remote_write:
 #      - url: http://mimir:9009/api/v1/push
   configs:
-    - name: fakeservice
+    - name: fakeservice-go
       scrape_configs:
-        - job_name: fakeservice
+        - job_name: fakeservice-go
           static_configs:
-            - targets: ['fakeservice:3001']
+            - targets: ['fakeservice-go:3001']
+      remote_write:
+        - url: http://mimir:9009/api/v1/push
+    - name: fakeservice-flink
+      scrape_configs:
+        - job_name: fakeservice-flink
+          static_configs:
+            - targets: ['fakeservice-flink-taskmanager:9464'] 
       remote_write:
         - url: http://mimir:9009/api/v1/push
 

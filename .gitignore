@@ -1,2 +1,6 @@
+.idea
+.gradle
+target
+*.iml
 **/*.pbf
 .DS_Store

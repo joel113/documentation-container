@@ -1,4 +1,10 @@
-version: '2'
+version: '3.5'
+
+networks:
+  my-proxy-net:
+    external:
+      name: network
+
 services:
   flink-zookeeper:
     image: confluentinc/cp-zookeeper:7.3.0
@@ -10,6 +16,8 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - my-proxy-net
   flink-broker:
     image: confluentinc/cp-kafka:7.3.0
     hostname: flink-broker
@@ -28,6 +36,8 @@ services:
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+    networks:
+      - my-proxy-net
   flink-kafka-topics-creator:
     build:
       context: kafka-topic-creator
@@ -38,36 +48,49 @@ services:
     environment:
       ZOOKEEPER_HOSTS: "zookeeper:2181"
       KAFKA_TOPICS: "cardata topspeed"
+    networks:
+      - my-proxy-net
   flink-jobmanager:
     image: flink:1.16.1-scala_2.12-java11
-    hostname: jobmanager
+    hostname: fakeservice-flink-jobmanager
     container_name: fakeservice-flink-jobmanager
-    command: standalone-job --job-classname com.joel.TopSpeedWindowing
+    command: standalone-job --job-classname com.joel.TopSpeedWindowing 
     restart: always
     volumes:
       - ./target/fakeservice-flink-example-0.0.1-SNAPSHOT-jar-with-dependencies.jar:/opt/flink/usrlib/fakeservice-flink-example-0.0.1-SNAPSHOT-jar-with-dependencies.jar
+      - ./opentelemetry-javaagent/opentelemetry-javaagent.jar:/opt/flink/lib/opentelemetry-javaagent.jar
     ports:
       - "8081:8081"
+      - "9464:9464"
     depends_on:
       - flink-broker
     environment:
       - |
         FLINK_PROPERTIES=
-        jobmanager.rpc.address: jobmanager
+        env.java.opts: -javaagent:/opt/flink/lib/opentelemetry-javaagent.jar -Dotel.javaagent.debug=false -Dotel.metrics.exporter=prometheus
+        jobmanager.rpc.address: fakeservice-flink-jobmanager
         parallelism.default: 2
+    networks:
+      - my-proxy-net
   flink-taskmanager:
     image: flink:1.16.1-scala_2.12-java11
-    hostname: taskmanager
+    hostname: fakeservice-flink-taskmanager
     container_name: fakeservice-flink-taskmanager
     command: taskmanager
     restart: always
     volumes:
       - ./target/fakeservice-flink-example-0.0.1-SNAPSHOT-jar-with-dependencies.jar:/opt/flink/usrlib/fakeservice-flink-example-0.0.1-SNAPSHOT-jar-with-dependencies.jar
+      - ./opentelemetry-javaagent/opentelemetry-javaagent.jar:/opt/flink/lib/opentelemetry-javaagent.jar
+    ports:
+      - "9465:9464"
     depends_on:
       - flink-jobmanager
     environment:
       - |
         FLINK_PROPERTIES=
-        jobmanager.rpc.address: jobmanager
+        env.java.opts: -javaagent:/opt/flink/lib/opentelemetry-javaagent.jar -Dotel.javaagent.debug=false -Dotel.metrics.exporter=prometheus
+        jobmanager.rpc.address: fakeservice-flink-jobmanager
         taskmanager.numberOfTaskSlots: 2
-        parallelism.default: 2  
+        parallelism.default: 2
+    networks:
+      - my-proxy-net
