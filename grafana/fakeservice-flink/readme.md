@@ -39,3 +39,5 @@ https://opentelemetry.io/docs/instrumentation/java/automatic/agent-config/
 https://github.com/open-telemetry/opentelemetry-java/blob/main/sdk-extensions/autoconfigure/README.md#prometheus-exporter
 
 https://nightlies.apache.org/flink/flink-docs-release-1.15/docs/deployment/resource-providers/standalone/docker/
+
+https://github.com/open-telemetry/opentelemetry-java-instrumentation/tree/main/instrumentation
