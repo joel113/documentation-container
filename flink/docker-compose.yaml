@@ -1,0 +1,37 @@
+version: '3.5'
+
+services:
+  jobmanager:
+    platform: linux/x86_64
+    image: flink:1.14.6-scala_2.12-java11
+    hostname: jobmanager
+    container_name: jobmanager
+    command: standalone-job --job-classname com.joel.FlinkJob
+    restart: always
+    ports:
+      - "8081:8081"
+      - "9464:9464"
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        env.java.opts: -javaagent:/opt/flink/lib/opentelemetry-javaagent.jar -Dotel.javaagent.debug=false -Dotel.metrics.exporter=prometheus -Dotel.instrumentation.aws-sdk.enabled=true 
+        jobmanager.rpc.address: jobmanager
+        parallelism.default: 2
+  taskmanager:
+    platform: linux/x86_64
+    image: flink:1.14.6-scala_2.12-java11
+    hostname: taskmanager
+    container_name: taskmanager
+    command: taskmanager
+    depends_on:
+      - jobmanager
+    restart: always
+    ports:
+      - "9465:9464"
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        env.java.opts: -javaagent:/opt/flink/lib/opentelemetry-javaagent.jar -Dotel.javaagent.debug=false -Dotel.metrics.exporter=prometheus -Dotel.instrumentation.aws-sdk.enabled=true 
+        jobmanager.rpc.address: jobmanager
+        taskmanager.numberOfTaskSlots: 6
+        parallelism.default: 2
