@@ -1,6 +1,90 @@
 # Kafka Streams
 
+Kafka Streams provides real-time streaming on top of the Kafka Consumer Client.
+
+Kafka Streams provides stateless (map, filter, etc.) and stateful transformations (aggregations, joins, and windowing).
+
+https://github.com/apache/kafka/tree/trunk
+
+https://github.com/apache/kafka/tree/trunk/streams
+
 https://github.com/confluentinc/kafka-streams-examples
+
+https://www.baeldung.com/java-kafka-streams-vs-kafka-consumer
+
+## KStream
+
+KStream handles the stream of records.
+
+https://github.com/apache/kafka/blob/trunk/streams/src/main/java/org/apache/kafka/streams/kstream/KStream.java
+
+Read and deserialize a stream:
+
+```
+StreamsBuilder builder = new StreamsBuilder();
+KStream<String, String> textLines = 
+  builder.stream(inputTopic, Consumed.with(Serdes.String(), Serdes.String()));
+```
+
+Stateless transformations:
+
+```
+KStream<String, String> textLinesUpperCase =
+  textLines
+    .map((key, value) -> KeyValue.pair(value, value.toUpperCase()))
+    .filter((key, value) -> value.contains("FILTER"));
+```
+
+## KTable
+
+KTable manages the changelog stream with the latest state of a given key. Each data record represents an update.
+
+GlobalKTables can be used to broadcast information to all tasks or to do joins without re-partition the input data.
+
+https://github.com/apache/kafka/blob/trunk/streams/src/main/java/org/apache/kafka/streams/kstream/KTable.java
+
+https://developer.confluent.io/courses/kafka-streams/ktable/
+
+Read a table:
+
+```
+KTable<String, String> textLinesTable = 
+  builder.table(inputTopic, Consumed.with(Serdes.String(), Serdes.String()));
+```
+
+Read a global table:
+
+```
+GlobalKTable<String, String> textLinesGlobalTable = 
+  builder.globalTable(inputTopic, Consumed.with(Serdes.String(), Serdes.String()));
+```
+
+Stateful transformations:
+
+```
+KTable<String, Long> wordCounts = textLines
+.flatMapValues(value -> Arrays.asList(value
+.toLowerCase(Locale.getDefault()).split("\\W+")))
+.groupBy((key, word) -> word)
+.count(Materialized.<String, Long, KeyValueStore<Bytes, byte[]>> as("counts-store"));
+```
+
+Joining two streams into one stream with 5s windowing grouped by key:
+
+```
+KStream<String, String> leftRightSource = leftSource.outerJoin(rightSource,
+  (leftValue, rightValue) -> "left=" + leftValue + ", right=" + rightValue,
+    JoinWindows.of(Duration.ofSeconds(5))).groupByKey()
+      .reduce(((key, lastValue) -> lastValue))
+  .toStream();
+```
+
+## Exactly-Once Processing
+
+```
+streamsConfiguration.put(StreamsConfig.PROCESSING_GUARANTEE_CONFIG,
+StreamsConfig.EXACTLY_ONCE);
+``
 
 ## RocksDB MacOS ARM Issue
 
