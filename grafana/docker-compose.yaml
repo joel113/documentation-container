@@ -6,7 +6,7 @@ networks:
     driver: bridge
 
 services:
-  fakeservice:
+  fakeservice-go:
     build:
       context: ./fakeservice-go
       dockerfile: Dockerfile
@@ -23,7 +23,15 @@ services:
       - 9090:9090
     volumes:
       - /tmp/prometheus:/prometheus
-      - ./prometheus.yaml:/etc/prometheus/prometheus.yaml
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    restart: always
+    networks:
+      - my-network
+  alertmanager:
+    image: prom/alertmanager:latest
+    hostname: alertmanager
+    ports:
+      - 9093:9093
     restart: always
     networks:
       - my-network
