@@ -30,4 +30,18 @@ datasources:
       datasourceUid: prometheus
     streamingEnabled:
       search: true
-
+- name: Loki
+  type: loki
+  access: proxy
+  url: http://loki:3100
+  isDefault: false
+  editable: true
+  jsonData:
+    maxLines: 1000
+    derivedFields:
+      # Link logs to traces in Tempo using trace_id
+      - name: trace_id
+        matcherRegex: '"trace_id":"([^"]*)"'
+        url: /explore?left={"datasource":"Tempo","queries":[{"refId":"A","queryType":"traceql","expr":"$${__value.raw}"}]}
+        datasourceUid: tempo-uid  # Replace with actual Tempo datasource UID
+        urlDisplayLabel: View trace
