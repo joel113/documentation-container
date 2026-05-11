@@ -27,7 +27,7 @@ otelcol.exporter.prometheus "default" {
 
 prometheus.remote_write "mimir" {
   endpoint {
-    url = "http://mimir:9009/api/prom/push"
+    url = "http://prometheus:9090/api/v1/write"
   }
 }
 
@@ -37,7 +37,7 @@ otelcol.exporter.loki "default" {
  
 loki.write "loki" {
   endpoint {
-    url = "http://loki:3100"
+    url = "http://loki:3100/loki/api/v1/push"
   }
 }
 
